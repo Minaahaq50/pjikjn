@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>تشفير ملف JSON</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<style>
+  body { font-family: Arial; background: #111; color: #fff; padding: 20px; }
+  .box { background: #222; padding: 20px; border-radius: 10px; width: 400px; margin: auto; }
+  input, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 6px; border: none; }
+  button { background: #00aaff; color: white; font-size: 16px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h2>🔐 تشفير ملف JSON</h2>
+
+  <label>اختر ملف JSON:</label>
+  <input type="file" id="fileInput" accept=".json">
+
+  <label>اكتب كلمة سر التشفير:</label>
+  <input type="password" id="password" placeholder="كلمة سر قوية">
+
+  <button onclick="encryptFile()">تشفير الملف</button>
+
+  <p id="status"></p>
+</div>
+
+<script>
+function encryptFile() {
+    const fileInput = document.getElementById("fileInput").files[0];
+    const password = document.getElementById("password").value;
+
+    if (!fileInput) {
+        alert("اختر ملف JSON أولاً");
+        return;
+    }
+    if (!password) {
+        alert("اكتب كلمة سر التشفير");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const jsonData = event.target.result;
+
+        // تشفير AES
+        const encrypted = CryptoJS.AES.encrypt(jsonData, password).toString();
+
+        // إنشاء ملف جديد
+        const blob = new Blob([encrypted], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "encrypted.json";
+        link.click();
+
+        document.getElementById("status").innerText = "✔️ تم التشفير وتحميل الملف";
+    };
+
+    reader.readAsText(fileInput);
+}
+</script>
+
+</body>
+</html>
