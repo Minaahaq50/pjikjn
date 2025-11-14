@@ -2,11 +2,10 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>تشفير ملف JSON</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<title>تشويش ملف JSON</title>
 <style>
   body { font-family: Arial; background: #111; color: #fff; padding: 20px; }
-  .box { background: #222; padding: 20px; border-radius: 10px; width: 400px; margin: auto; }
+  .box { background: #222; padding: 20px; border-radius: 10px; width: 430px; margin: auto; }
   input, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 6px; border: none; }
   button { background: #00aaff; color: white; font-size: 16px; cursor: pointer; }
 </style>
@@ -14,30 +13,26 @@
 <body>
 
 <div class="box">
-  <h2>🔐 تشفير ملف JSON</h2>
+  <h2>🔐 تشويش بيانات JSON (بدون كلمة سر)</h2>
 
   <label>اختر ملف JSON:</label>
   <input type="file" id="fileInput" accept=".json">
 
-  <label>اكتب كلمة سر التشفير:</label>
-  <input type="password" id="password" placeholder="كلمة سر قوية">
-
-  <button onclick="encryptFile()">تشفير الملف</button>
+  <button onclick="obfuscateFile()">تشويش الملف</button>
 
   <p id="status"></p>
 </div>
 
 <script>
-function encryptFile() {
+function encodeText(str) {
+    return btoa(unescape(encodeURIComponent(str)));  
+}
+
+function obfuscateFile() {
     const fileInput = document.getElementById("fileInput").files[0];
-    const password = document.getElementById("password").value;
 
     if (!fileInput) {
-        alert("اختر ملف JSON أولاً");
-        return;
-    }
-    if (!password) {
-        alert("اكتب كلمة سر التشفير");
+        alert("اختَر ملف JSON أولًا");
         return;
     }
 
@@ -45,17 +40,17 @@ function encryptFile() {
     reader.onload = function(event) {
         const jsonData = event.target.result;
 
-        // تشفير AES
-        const encrypted = CryptoJS.AES.encrypt(jsonData, password).toString();
+        // تشويش البيانات (Base64 + URI encode)
+        const obf = encodeText(jsonData);
 
-        // إنشاء ملف جديد
-        const blob = new Blob([encrypted], { type: "text/plain" });
+        // ملف جديد
+        const blob = new Blob([obf], { type: "text/plain" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "encrypted.json";
+        link.download = "obfuscated.txt";
         link.click();
 
-        document.getElementById("status").innerText = "✔️ تم التشفير وتحميل الملف";
+        document.getElementById("status").innerHTML = "✔️ تم التشويش وتحميل الملف";
     };
 
     reader.readAsText(fileInput);
